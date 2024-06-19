@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração de Locomoção por Lotação</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 1em;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5em 1em;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        main {
+            padding: 2em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-container {
+            position: relative;
+            width: 80%;
+            margin: 2em 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2em;
+        }
+        .chart-container h3 {
+            margin-top: 0;
+        }
+        .edit-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+        }
+        .edit-form {
+            display: none;
+            flex-direction: column;
+            margin-top: 1em;
+        }
+        .edit-form input {
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Painel de Administração</h1>
+    </header>
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Relatórios</a>
+        <a href="#">Motoristas</a>
+        <a href="#">Financeiro</a>
+        <a href="#">Configurações</a>
+    </nav>
+    <main>
+        <div class="chart-container">
+            <i class="fas fa-edit edit-icon"></i>
+            <h3>Total de Viagens</h3>
+            <canvas id="totalViagensChart"></canvas>
+            <div class="edit-form" id="editTotalViagensForm">
+                <input type="number" placeholder="Janeiro" id="janTotalViagens">
+                <input type="number" placeholder="Fevereiro" id="febTotalViagens">
+                <input type="number" placeholder="Março" id="marTotalViagens">
+                <input type="number" placeholder="Abril" id="aprTotalViagens">
+                <input type="number" placeholder="Maio" id="mayTotalViagens">
+                <input type="number" placeholder="Junho" id="junTotalViagens">
+                <input type="number" placeholder="Julho" id="julTotalViagens">
+                <input type="number" placeholder="Agosto" id="augTotalViagens">
+                <input type="number" placeholder="Setembro" id="sepTotalViagens">
+                <input type="number" placeholder="Outubro" id="octTotalViagens">
+                <input type="number" placeholder="Novembro" id="novTotalViagens">
+                <input type="number" placeholder="Dezembro" id="decTotalViagens">
+                <button onclick="updateChart('totalViagensChart', totalViagensData, 'editTotalViagensForm')">Atualizar</button>
+            </div>
+        </div>
+        <div class="chart-container">
+            <i class="fas fa-edit edit-icon"></i>
+            <h3>Receita Total</h3>
+            <canvas id="receitaTotalChart"></canvas>
+            <div class="edit-form" id="editReceitaTotalForm">
+                <input type="number" placeholder="Janeiro" id="janReceitaTotal">
+                <input type="number" placeholder="Fevereiro" id="febReceitaTotal">
+                <input type="number" placeholder="Março" id="marReceitaTotal">
+                <input type="number" placeholder="Abril" id="aprReceitaTotal">
+                <input type="number" placeholder="Maio" id="mayReceitaTotal">
+                <input type="number" placeholder="Junho" id="junReceitaTotal">
+                <input type="number" placeholder="Julho" id="julReceitaTotal">
+                <input type="number" placeholder="Agosto" id="augReceitaTotal">
+                <input type="number" placeholder="Setembro" id="sepReceitaTotal">
+                <input type="number" placeholder="Outubro" id="octReceitaTotal">
+                <input type="number" placeholder="Novembro" id="novReceitaTotal">
+                <input type="number" placeholder="Dezembro" id="decReceitaTotal">
+                <button onclick="updateChart('receitaTotalChart', receitaTotalData, 'editReceitaTotalForm')">Atualizar</button>
+            </div>
+        </div>
+        <!-- Continue adicionando outras seções de gráficos -->
+    </main>
+
+    <!-- Inclua a biblioteca Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Função para gerar gráficos
+        function generateChart(ctx, label, data, backgroundColor, borderColor) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor,
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Dados de exemplo para os gráficos
+        const totalViagensData = [120, 130, 150, 170, 160, 180, 190, 200, 210, 220, 230, 240];
+        const receitaTotalData = [10000, 11000, 10500, 11500, 12000, 13000, 12500, 13500, 14000, 14500, 15000, 15500];
+
+        // Geração dos gráficos
+        let totalViagensChart, receitaTotalChart;
+
+        window.onload = function() {
+            totalViagensChart = generateChart(document.getElementById('totalViagensChart'), 'Total de Viagens', totalViagensData, 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
+            receitaTotalChart = generateChart(document.getElementById('receitaTotalChart'), 'Receita Total', receitaTotalData, 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)');
+        };
+
+        // Mostrar formulário de edição ao clicar no ícone de edição
+        document.querySelectorAll('.edit-icon').forEach((icon, index) => {
+            icon.addEventListener('click', () => {
+                const form = document.querySelectorAll('.edit-form')[index];
+                form.style.display = form.style.display === 'flex' ? 'none' : 'flex';
+            });
+        });
+
+        // Função para atualizar os gráficos com novos valores
+        function updateChart(chartId, data, formId) {
+            const chart = chartId === 'totalViagensChart' ? totalViagensChart : receitaTotalChart;
+            const form = document.getElementById(formId);
+            for (let i = 0; i < 12; i++) {
+                data[i] = parseInt(form.querySelectorAll('input')[i].value) || data[i];
+            }
+            chart.data.datasets[0].data = data;
+            chart.update();
+        }
+    </script>
+</body>
+</html>
